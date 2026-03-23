@@ -104,9 +104,32 @@ you used in your `.env` file.
 
 > The client mentions, almost as an aside, that they currently send every member a manual renewal reminder email three weeks before their subscription expires. One person spends about four hours a week on this. They didn't include it in the brief because they assumed it was too small to fix. Describe how you would automate this. Be specific, what would you build or configure, using which tools, and why. If it touches your POC, show that connection. If it's a separate automation layer, describe it clearly enough that someone could build it from your description.
 
-What I would do:
+#### What I would do:
+Since the database stores information about a user/member, we can also store the status of a member's subscription in this DB. This will allow us to automate sending of emails based on the subscription status in the DB.
+Rough steps:
 1. Add a data model for subscriptions
-    - In `models.py`, add a `Subscription` SQLModel to represent a user with subscription start date and end date
+    - In `models.py`, add a `Subscription` SQLModel to represent a table with subscription start date and end date of a user
     - Add any additional properties like subscription price, notes, etc.
 2. Add an endpoint to create a subscription record when a user becomes a member or when a member pays for subscription.
-    - Depending on how a member becomes a "subscriber", call
+3. Add a script that runs on a regular schedule to check users whose subscription is ending soon
+    - The script can query this subscription table for active users' subscription end date. If the end date is coming soon (e.g. in 1 month), then trigger the following function.
+4. Create a function (or another endpoint perhaps?) to send an email to each user whose subscription is ending soon, to remind them of renewal.
+
+---
+
+### Part 3: Data Security
+
+> This system will store personal data for 800 members including names, email addresses, and payment history. What are the three most important security considerations you would build in from the start, and for each one, what specifically would you do?
+
+Important considerations:
+1. Encryption and masking
+    - Encyrption of database columns where personal data is stored.
+    - Encyrption in transit using TLS to ensure that data that is being transmitted cannot be intercepted.
+    - Mask confidential data like passwords and credit card numbers - use hashing tools to verify passwords and other sensitive information
+    - Use masing tools (like hashlib or pwdlib in Python) to mask data from application logs and communications with third parties.
+2. Access control
+    - Build minimum user privileges to access certain user data. For example, a user can only see their own data and not others', only admins can see users' data (excluding sensitive data like passwords)
+    - Password-protect the API key and database password. Use secure tools like Vault when deploying to production to access secrets securely.
+3. Data retention
+    - Only store these data when needed and only up to when they are needed for the functionality of the app to the user
+    - Have a process to remove user data upon user request or when data has reached a staleness threshold
