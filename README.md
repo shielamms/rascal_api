@@ -27,3 +27,39 @@ On startup, the DB is initialised with the following tables based on the FastAPI
 1. `user` - contains records of users (primary key is `id` which is UUID)
 2. `event` - contains records of events (primary key is `id` which is UUID)
 3. `user_registration` - contains mappings of user and event via foreign keys to `user.id` and `event.id` 
+
+
+## Project setup
+
+### Pre-requisites
+
+The DB and the app both run in docker containers, orchestrated by docker compose (see `docker-compose.yaml` file).
+To run the app, you must have Docker and docker compose - refer to the [online docker reference](https://docs.docker.com/compose/install/) to install docker in your machine
+
+### Running the app
+
+1. Create a `.env` file with the required environment vars
+
+```
+cp ./.env.example ./.env
+```
+
+2. In your `.env` file, replace the values for each variable:
+
+POSTGRES_USER=arbitrary_username
+POSTGRES_PASSWORD=arbitrary_password
+FIRST_SUPERUSER_EMAIL=arbitrary_email
+FIRST_SUPERUSER_PASSWORD=arbitrary_password
+API_SECRET_KEY=arbitrary_str
+
+
+3. Run docker-compose
+
+The following command will automatically build the image through Dockerfile and set up the DB connection:
+
+```
+docker compose up
+```
+
+---
+
