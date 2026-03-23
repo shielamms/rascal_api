@@ -35,6 +35,10 @@ class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime
 
+class UsersPublic(SQLModel):
+    # Model for returning multiple users in a response
+    data: list[UserPublic]
+
 
 # Login models
 class LoginRequest(SQLModel):
