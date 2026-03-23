@@ -2,10 +2,17 @@
 
 ## Summary
 
-A demo API with basic membership and event management endpoints.
+A demo API with basic membership and event management endpoints for an organisation.
 
 While this demo app only covers the backend API, since this is built with FastAPI,
 you can play around with the endpoints through a web-based interface containing the API documentation.
+
+The focus of this POC is the core functionality of members management, with the following flow:
+- Create a user (initially an admin "superuser")
+- Login in as a user
+- Add an event
+- Check list of events
+- Register to an event
 
 This API covers the following core use cases:
 1. User login - upon application startup, the database 
@@ -61,5 +68,45 @@ The following command will automatically build the image through Dockerfile and 
 docker compose up
 ```
 
+Wait for a few seconds (~5 seconds) until the DB and the app are ready to start accepting connections.
+
+4. Open a browser and type `localhost:8000/docs` in the search bar
+
+This will take you to the Swagger API documentation, which allows you to test the API using the credentials that
+you used in your `.env` file.
+
 ---
 
+### What would I build in the next 4 hours
+
+
+1. More endpoints like
+    - Update user - allow members to update their data
+    - See registrations - allow members to see their event registrations, and allow admins to see
+        users who have registered to an event
+    - Subscription management - allow users to check their subscription status and payments, renew subscriptions
+    - Signup and reminder emails - send emails when a user joins or to remind them about their subscriptions
+
+2. Add tests - I did not add them here initially since testing via the API docs was enough. But ideally have unit tests.
+
+3. DevOps stuff like:
+    - Pre-commit hooks
+    - Git workflows and Cloud deployment - use GH Actions for automated testing and build, as well as deploy to Cloud
+
+4. Build the frontend - using React.js (lots of online learning and support references for integrating React with FastAPI)
+
+5. Cloud infra setup - Use terraform to build cloud infra needed, depending on the cloud provider
+
+
+---
+
+### Part 2: One Problem, Your Solution
+
+> The client mentions, almost as an aside, that they currently send every member a manual renewal reminder email three weeks before their subscription expires. One person spends about four hours a week on this. They didn't include it in the brief because they assumed it was too small to fix. Describe how you would automate this. Be specific, what would you build or configure, using which tools, and why. If it touches your POC, show that connection. If it's a separate automation layer, describe it clearly enough that someone could build it from your description.
+
+What I would do:
+1. Add a data model for subscriptions
+    - In `models.py`, add a `Subscription` SQLModel to represent a user with subscription start date and end date
+    - Add any additional properties like subscription price, notes, etc.
+2. Add an endpoint to create a subscription record when a user becomes a member or when a member pays for subscription.
+    - Depending on how a member becomes a "subscriber", call
