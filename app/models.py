@@ -65,6 +65,10 @@ class Event(EventBase, table=True):
         default_factory=get_datetime_utc, sa_type=DateTime(timezone=True)
     )
 
+class EventsPublic(SQLModel):
+    # Model for returning multiple events in a response
+    data: list[Event]
+
 
 # Evetn registration models
 class EventRegisteration(SQLModel, table=True):
